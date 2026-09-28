@@ -1,100 +1,83 @@
-# 🕊️ Divine Quotes - Progressive Web App (PWA)
+# 🕊️ Divine Quotes – Sacred Wisdom
 
-A responsive, offline-first Progressive Web App that curates **60 inspiring motivational quotes** from the **Bible**, **Bhagavad Gita**, and **Holy Quran** (20 from each). 
+A Flutter app for **Android, iOS and the web** that shares **60 inspiring quotes** from the **Bible**, **Bhagavad Gita** and **Holy Quran** (20 from each).
 
-Built with zero-build modern web standards (vanilla HTML5, CSS3, ES6 JavaScript) so you can push directly to GitHub and publish on **GitHub Pages** instantly.
+This project used to be a vanilla-JS Progressive Web App. It has been rebuilt in Flutter with the same design and features, so one codebase now covers all three platforms.
 
 ---
 
 ## ✨ Features
 
-- **60 Curated Sacred Quotes**: 20 from the Bible, 20 from the Bhagavad Gita, and 20 from the Holy Quran with scripture citations.
-- **Dynamic Shuffling**: Displays a random quote upon each launch or when tapping **New Quote**.
-- **Category Filter**: View quotes across **All** scriptures or isolate by ✝️ **Bible**, 🕉️ **Gita**, or ☪️ **Quran**.
-- **Web Share & Clipboard**: Native mobile share sheet (`navigator.share`) with automatic fallback to clipboard copy.
-- **Daily Notifications**: Configure daily notifications at your desired hour and minute with persistent storage.
-- **100% Offline Support**: Cached via Service Worker (`sw.js`) so the app works anywhere without internet.
-- **Installable PWA**: Can be installed to the home screen on Android, iPhone/iPad (iOS Safari), and Desktop like a native app.
+- **60 curated sacred quotes** with scripture citations.
+- **Random quote** on every launch and each tap of **New Quote**. The same quote never shows twice in a row.
+- **Scripture filter:** **All**, ✝️ **Bible**, 🕉️ **Gita** or ☪️ **Quran**.
+- **Share** through the native share sheet, or **copy to clipboard**.
+- **Daily notifications** at a time you choose, saved on the device:
+  - **Android / iOS:** scheduled with the OS for the next 30 days, each day with a different quote. The schedule is topped up every time the app opens, so notifications arrive even when the app is closed.
+  - **Web:** browsers can't schedule notifications, so like the original PWA, the page checks every 30 seconds while the tab is open.
+- **Light & dark theme** that follows the system setting (Material 3 purple palette from the original app).
 
 ---
 
-## 🚀 How to Push to GitHub & Publish to GitHub Pages
+## 🚀 Getting started
 
-### Step 1: Create a Repository on GitHub
-1. Go to [github.com/new](https://github.com/new).
-2. Name your repository (e.g. `divine-quotes-pwa`).
-3. Set visibility to **Public** and click **Create repository**.
-
-### Step 2: Push Your Code via Terminal
-Open PowerShell or Command Prompt, navigate to this project folder, and run:
+Requires the [Flutter SDK](https://docs.flutter.dev/get-started/install) (stable channel, Dart 3.13+).
 
 ```bash
-cd "C:\Users\Dr.Tejaswi\.gemini\antigravity\scratch\divine-quotes-pwa"
+flutter pub get
 
-# Initialize git repository
-git init
-
-# Add all files and commit
-git add .
-git commit -m "Initial commit: Divine Quotes PWA"
-
-# Set branch name to main
-git branch -M main
-
-# Link your GitHub repository (replace USERNAME and REPO with yours)
-git remote add origin https://github.com/YOUR_USERNAME/divine-quotes-pwa.git
-
-# Push to GitHub
-git push -u origin main
+flutter run -d chrome     # website
+flutter run -d android    # Android device / emulator
+flutter run -d ios        # iPhone / simulator (needs a Mac with Xcode)
 ```
 
-### Step 3: Enable GitHub Pages (3 Clicks)
-1. Go to your repository on GitHub.
-2. Click **Settings** (tab on the top right).
-3. In the left sidebar, click **Pages**.
-4. Under **Build and deployment** > **Branch**:
-   - Select **`main`** branch.
-   - Leave the folder as **`/ (root)`**.
-   - Click **Save**.
-5. Within 1–2 minutes, GitHub will give you your live URL:
-   ```
-   https://YOUR_USERNAME.github.io/divine-quotes-pwa/
-   ```
+### Building releases
+
+```bash
+flutter build web --release --base-href /divine-quotes-pwa/   # output: build/web
+flutter build apk --release                                    # or: flutter build appbundle
+flutter build ipa --release                                    # on macOS
+```
+
+Before publishing to the stores:
+- Change the Android `applicationId` in `android/app/build.gradle.kts` and the iOS bundle identifier in Xcode (both still use `com.example.*`).
+- Set up a release signing config for Android and a development team for iOS.
+
+### App icons
+
+Icons for every platform are generated from `assets/icon/icon.png`:
+
+```bash
+dart run flutter_launcher_icons
+```
 
 ---
 
-## 📲 How to Install as an App on Phones
+## 🌐 Publishing the website on GitHub Pages
 
-### On Android (Chrome / Edge / Samsung Internet):
-1. Open your live GitHub Pages URL.
-2. Tap the **Install** banner on screen, or tap the three-dots menu (**⋮**) in Chrome.
-3. Tap **Add to Home screen** or **Install app**.
-4. The Divine Quotes icon will now appear on your home screen and run in fullscreen standalone mode.
+`.github/workflows/deploy-web.yml` builds the Flutter web app and deploys it on every push to `main`.
 
-### On iPhone & iPad (Safari):
-1. Open your live GitHub Pages URL in **Safari**.
-2. Tap the **Share** button (the square with an arrow pointing up).
-3. Scroll down and tap **Add to Home Screen**.
-4. Tap **Add** in the top-right corner.
+One-time setup: in the repo go to **Settings → Pages → Build and deployment → Source** and choose **GitHub Actions**.
+
+The site will be live at `https://<username>.github.io/divine-quotes-pwa/`.
 
 ---
 
-## 📂 Project Structure
+## 📂 Project structure
 
 ```
-divine-quotes-pwa/
-├── index.html              # Main HTML5 layout & meta tags
-├── css/
-│   └── style.css           # Material 3 inspired theme & dark mode
-├── js/
-│   ├── quotes.js           # 60 quotes database (Bible, Gita, Quran)
-│   ├── notifications.js    # Web Notifications & daily scheduler
-│   └── app.js              # UI controller & events
-├── sw.js                   # Service worker for offline caching & A2HS
-├── manifest.webmanifest    # PWA configuration & metadata
-├── icons/
-│   ├── icon.svg            # Scalable vector icon
-│   ├── icon-192.png        # Standard PWA icon
-│   └── icon-512.png        # High-res PWA icon
-└── README.md               # Documentation & deployment guide
+lib/
+├── main.dart                               # App entry: loads settings, notifications, theme
+├── theme.dart                              # Material 3 light & dark colour schemes
+├── models/quote.dart                       # Quote + ScriptureSource
+├── data/quotes.dart                        # The 60 quotes + random/filter helpers
+├── services/
+│   ├── settings_store.dart                 # Saved preferences (shared_preferences)
+│   └── notification_service.dart           # Daily notifications (mobile + web)
+├── screens/home_screen.dart                # Main screen
+└── widgets/
+    ├── quote_card.dart                     # Animated gradient quote card
+    └── notification_settings_dialog.dart   # Enable toggle + time picker
+test/quotes_test.dart                       # Unit tests for quote data
+android/  ios/  web/                        # Platform projects
 ```
